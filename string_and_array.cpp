@@ -159,6 +159,42 @@ char *read_string()
     s[strlen(s)-1] = '\0';
     return s;
 }
+/* cracking 1.8
+ * Assume you have a method isSubstring which checks if one word isa substring of another.
+ * Given two strings,s1 and s2,write code to check If s2 is a rotation of s1 
+ * using only one call to isSubstring (e.g.,"waterbottLe"is a rotation of "erbottlewat").
+ */
+char *is_substring(char *source, char *substr)
+{
+    assert(source && substr);
+    char *p, *q, *r;
+    for (p = source; *p; p++) {
+        q = p;
+        r = substr;
+        while (*r && *r++ == *q++) ;
+        if (*r == '\0')
+            return p;
+    }
+    return NULL;
+}
+
+bool is_rotation(char *s1, char *s2)
+{
+    assert(s1 && s2);
+    int len = strlen(s1);
+    char *news1 = (char*)malloc(len*2+1);
+    int i;
+    for (i = 0; i < len; i++) {
+        news1[i] = news1[i+len] = s1[i];
+    }
+    news1[2*len] = '\0';
+
+    if (is_substring(news1, s2)) {
+        return true;
+    } else {
+        return false;
+    }
+}
 int main() 
 {
    /* 1.1
@@ -198,6 +234,17 @@ int main()
     char str[] = "aabbbbbccdddddefghi";
     printf("after compress is %s\n", compress_string(str));
     */
+   /*1.8 
+    char s1[] = "hello world";
+    char s2[] = "worldhelo ";
+    if (is_rotation(s1, s2)) {
+        printf ("%s is rotation of %s\n", s2, s1);
+    }else {
+        printf ("%s is not rotation of %s\n", s2, s1);
+
+    }
+    */
+
     return 0;
 }
 
