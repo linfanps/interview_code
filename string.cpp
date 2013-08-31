@@ -1,4 +1,6 @@
 #include <iostream>
+#include <stack>
+#include <vector>
 #include <cstdio>
 #include <cassert>
 #include <cstring>
@@ -195,6 +197,65 @@ bool is_rotation(char *s1, char *s2)
         return false;
     }
 }
+/*
+ * 剑指offer 28
+ *给定一个字符串，打印出这个字符串中字符的所有排列
+ */
+void print_string_permutation(char *str, char *start)
+{
+    assert(str);
+    if (*start == '\0') {
+        printf("%s\n", str);
+        return ;
+    }
+
+    char temp, *p;
+    for (p = start; *p; p++) {
+        temp = *start;
+        *start = *p;
+        *p = temp;
+
+        print_string_permutation(str,start+1);
+
+        temp = *start;
+        *start = *p;
+        *p = temp;
+    }
+}
+/*
+ * 剑指offer 28 扩展
+ * 给定一个字符串，打印出这个字符串中字符的所有组合
+ * abc->a,b,c,ab,ac,bc,abc
+ */
+void print_string_combination(char *s, int left, vector<char> &st)
+{
+    if (left == 0) {
+        vector<char>::iterator iter;
+        for (iter = st.begin(); iter != st.end(); iter++) {
+            printf("%c", *iter);
+        }
+        printf("\n");
+        return ;
+    }
+    if (*s == '\0') {
+        return ;
+    }
+    char *p;
+    for (p = s; *p; p++) {
+        st.push_back(*p);
+        print_string_combination(p+1, left-1,st);
+        st.pop_back();
+    }
+}
+void string_combination(char *str)
+{
+    assert(str && *str != '\0');
+    int i;
+    vector<char> st;
+    for (i = 1; i <= strlen(str); i++)
+        print_string_combination(str, i, st);
+}
+
 int main() 
 {
    /* 1.1
@@ -244,7 +305,12 @@ int main()
 
     }
     */
-
+    /* offer 28
+    char str[] = "abc";
+    print_string_permutation(str, str);
+    */
+    char str[] = "abc";
+    string_combination(str);
     return 0;
 }
 
