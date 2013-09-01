@@ -255,7 +255,59 @@ void string_combination(char *str)
     for (i = 1; i <= strlen(str); i++)
         print_string_combination(str, i, st);
 }
+/*
+ * 剑指offer 42
+ * 给定一个英文句子，反转句子中单词的顺序，但单词中字符的顺序不变 
+ * 如I am a student. 反转后为student. a am I
+ */
+void reverse_string_v2(char *begin, char *end)
+{
+    assert(begin && end);
+    while (begin < end) {
+        char temp = *begin;
+        *begin++ = *end;
+        *end-- = temp;
+    }
+}
+char *reverse_sentence(char *sentence)
+{
+    reverse_string_v2(sentence, sentence+strlen(sentence)-1);
 
+    char *begin, *end;
+    begin = end = sentence;
+
+    while (*begin != '\0') {
+        if (*begin == ' ') {
+            begin++;
+            end++;
+        } else if (*end == ' ' || *end == '\0') {
+            reverse_string_v2(begin, end-1);
+            begin = end;
+        } else {
+            end++;
+        }
+    }
+
+    return sentence;
+
+}
+/*
+ * 剑指offer 42 扩展
+ * 字符串的左旋转就是把字符串前面的若干个字符移到字符串的尾部，实现字符串左旋功能 
+ * 如abcdefg旋转位置为2，则旋转后为cdefgab
+ */
+char * left_rotate_string(char *str, int pos)
+{
+    assert(str);
+    int len = strlen(str);
+    if (pos > 0 && pos < len) {
+        reverse_string_v2(str, str+pos-1);
+        reverse_string_v2(str+pos, str+len-1);
+        reverse_string_v2(str, str+len-1);
+    }
+
+    return str;
+}
 int main() 
 {
    /* 1.1
@@ -309,8 +361,16 @@ int main()
     char str[] = "abc";
     print_string_permutation(str, str);
     */
+    /* offer 28 extend
     char str[] = "abc";
     string_combination(str);
+    */
+    /* offer 42
+    char sen[] = "hello! I am a student!";
+    printf("%s after reverse_sencence is %s",sen, reverse_sentence(sen));
+    */
+    char str[] = "abcdefg";
+    printf("%s after left rotate 2 is %s\n", str, left_rotate_string(str, 2));
     return 0;
 }
 
