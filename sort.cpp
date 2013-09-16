@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cassert>
 using namespace std;
 //selection sort
 void selection_sort(int a[], int n)
@@ -142,6 +143,22 @@ void heap_fixdown(int a[], int n, int pos)
 
     }
 }
+void heap_fixdown_v2(int a[], int n, int pos)
+{
+    int change,temp;
+    while (2*pos + 1 < n) {
+        change = 2 * pos +1;
+        if (change+1 < n && a[change] > a[change+1])
+            change++;
+        if (a[change] >= a[pos]) 
+            break;
+        temp = a[change];
+        a[change] = a[pos];
+        a[pos] = temp;
+        pos = change;
+
+    }
+}
 void heap_sort(int a[], int n)
 {
     int i,temp;
@@ -201,9 +218,92 @@ void do_sort()
     print_array(a, len);
     
 }
+
+//题14：输入一个数组，实现一个函数完成调整数组中元素位置，使所有奇数位于数组前半部分，偶数位于数组后半部分
+void record_odd_even(int a[], int n)
+{
+    int start = 0, end = n-1;
+    while (start < end) {
+        while(start < end && a[start] % 2) 
+            start++;
+        while(start < end && a[end] % 2 == 0) 
+            end--;
+        if (start < end) {
+            int temp = a[start];
+            a[start] = a[end];
+            a[end] = temp;
+        }
+    }
+}
+//题29：数组中有一个数字出现的次数超过数组长度的一半，找出这个数字
+int more_than_half_num(int a[], int n)
+{
+    assert(a && n > 0);
+    int middle = n >> 1;
+    int pos = partition(a, 0, n-1);
+    while (pos != middle) {
+        if (pos > middle) {
+            pos = partition(a, 0, pos-1);
+        } else {
+            pos = partition(a, pos+1, n-1);
+        }
+    }
+
+    return a[middle];
+}
+//题30：给定一个有n个元素的数组，找出其中最小的k个数
+void find_min_k_v1(int a[], int n, int output[], int k)
+{
+   assert(a && n > 0 && k > 0);
+   int start = 0, end = n-1;
+   int pos = partition(a, start, end);
+   while (pos != k-1) {
+       if (pos > k-1) {
+           pos = partition(a,0, pos-1);
+       }else {
+           pos = partition(a, pos+1, n-1);
+       }
+   }
+   int i;
+   for (i = 0; i < k;i++) {
+       output[i] = a[i];
+   }
+}
+
+void find_min_k_v2(int a[], int n, int output[], int k)
+{
+    int i,j;
+    for (i = 0; i < k; i++)
+        output[i] = a[i];
+    
+    for (j = k/2; j >=0 ;j--)
+        heap_fixdown(output,k,j);
+
+    for (; i < n; i++) {
+        if (a[i] < output[0]) {
+            output[0] = a[i];
+            heap_fixdown(output, k, 0);
+        }
+    }
+    
+}
 int main() 
 {
-    do_sort();
+    //do_sort();
+    /*
+    int a[] = {1,2,3,4,4,4,8,9,11,2,3};
+    record_odd_even(a, sizeof(a)/sizeof(int));
+    print_array(a, sizeof(a)/sizeof(int));
+    */
+    /*
+    int a[] = {1,2,2,2,1,2,8,2,2,2,3};
+    printf("more than half num is %d\n", more_than_half_num(a, sizeof(a)/sizeof(int)));
+    */
+    int a[] = {1,6,9,3,4,12,2,3,7,10};
+    int k = 4;
+    int output[k];
+    find_min_k_v2(a, sizeof(a)/sizeof(int), output, k);
+    print_array(output, k);
     return 0;
 }
 

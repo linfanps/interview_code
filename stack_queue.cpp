@@ -1,5 +1,6 @@
 #include <iostream>
 #include <stack>
+#include <cassert>
 #include <exception>
 #include <queue>
 using namespace std;
@@ -83,6 +84,75 @@ template<typename T> T CStack<T>::pop()
 
     }
 }
+
+//题21：定义栈的数据结构，实现能得到栈最小元素的min函数，要求pop，push，min都是O(1)
+template<typename T> class StackWithMin
+{
+    public:
+        StackWithMin(){}
+        ~StackWithMin(){}
+        void push(const T&);
+        T pop();
+        T min();
+    
+    private:
+        stack<T> st;
+        stack<T> min_st;
+};
+
+template<typename T> void StackWithMin<T>::push(const T& element)
+{
+    st.push(element);
+    if (min_st.empty() || element < min_st.top()) {
+        min_st.push(element);
+    } else {
+        min_st.push(min_st.top());
+    }
+}
+
+template<typename T> T StackWithMin<T>::pop()
+{
+    if (st.empty()) {
+        throw new exception();
+    }
+    T t = st.top();
+    st.pop();
+    min_st.pop();
+
+    return t;
+}
+template<typename T> T StackWithMin<T>::min() 
+{
+    if (min_st.empty()) {
+        throw new exception();
+    }
+    return min_st.top();
+    
+}
+
+//题22：栈的压入、弹出序列：给出两个整数队列，第一个是压入顺序，判断第二个是否是弹出顺序，假设压入栈的数字不相同
+bool is_pop_order(int push_order[], int pop_order[], int n)
+{
+    assert(push_order && pop_order && n > 0);
+    stack<int> st;
+    int i = 0, j = 0;
+    while (i  < n) {
+        if (st.empty() || st.top() != pop_order[j]) {
+            st.push(push_order[i++]);
+        } else {
+            st.pop();
+            j++;
+        }
+    }
+    
+    if (pop_order[j] == st.top()) {
+        st.pop();
+        j++;
+    }
+    printf("i=%d,j=%d\n",i,j);
+
+   return  (j == n) ? true : false; 
+}
 int main() 
 {
     /*
@@ -96,6 +166,7 @@ int main()
     cout<<q.deletehead()<<" ";
     cout<<q.deletehead()<<" ";
     */
+    /*
     CStack<int> st;
     st.push(1);
     st.push(2);
@@ -103,7 +174,14 @@ int main()
     cout<<st.pop()<<endl;
     cout<<st.pop()<<endl;
     cout<<st.pop()<<endl;
-    
+    */
+
+    int push_order[] = {1,2,3,4,5};
+    int pop_order1[] = {1,2,3,4,5};
+    int pop_order2[] = {4,5,3,1,2};
+
+    printf("{1,2,3,4,5} is pop order of {1,2,3,4,5}:%d\n", is_pop_order(push_order,pop_order1,sizeof(push_order)/sizeof(int)));
+    printf("{4,5,3,1,2} is pop order of {1,2,3,4,5}:%d\n", is_pop_order(push_order,pop_order2,sizeof(push_order)/sizeof(int)));
     return 0;
 }
 
