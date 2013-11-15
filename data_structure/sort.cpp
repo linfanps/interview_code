@@ -287,6 +287,35 @@ void find_min_k_v2(int a[], int n, int output[], int k)
     }
     
 }
+//题26：在数组中如果前面一个数字大于后面一个数字，则这两个数字构成一个逆序对。输入一个数组，求出数组中逆序对的个数
+int get_inverse_pairs(int a[], int copy[], int start ,int end)
+{
+    if (start >= end) return 0;
+    int mid = (start + end) / 2;
+    int left_count = get_inverse_pairs(a, copy, start, mid);
+    int right_count = get_inverse_pairs(a, copy, mid+1, end);
+
+    int i = start, j = mid + 1, k = 0, count = 0;
+    while (k <= end-start) {
+        if (i > mid) {
+            copy[k+start] = a[j++];
+        } else if (j > end) {
+            copy[k+start] = a[i++];
+        } else if (a[i] > a[j]) {
+            count += mid-i+1;
+            copy[k+start] = a[j++];
+        } else {
+            copy[k+start] = a[i++];
+        }
+
+        k++;
+    }
+
+    for(i = start; i <= end; i++) {
+        a[i] = copy[i];
+    }
+    return left_count + right_count + count;
+}
 int main() 
 {
     //do_sort();
@@ -299,11 +328,17 @@ int main()
     int a[] = {1,2,2,2,1,2,8,2,2,2,3};
     printf("more than half num is %d\n", more_than_half_num(a, sizeof(a)/sizeof(int)));
     */
+    /*
     int a[] = {1,6,9,3,4,12,2,3,7,10};
     int k = 4;
     int output[k];
     find_min_k_v2(a, sizeof(a)/sizeof(int), output, k);
     print_array(output, k);
+    */
+    int a[] = {7, 5, 6, 4};
+    int copy[4];
+    printf("pairs is %d\n", get_inverse_pairs(a, copy, 0, sizeof(a)/sizeof(int) - 1));
+    print_array(a, sizeof(a)/sizeof(int));
     return 0;
 }
 
